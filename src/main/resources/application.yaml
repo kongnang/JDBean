@@ -1,0 +1,16 @@
+server:
+  port: 8888
+
+# 解决swagger3导致Failed to start bean 'documentationPluginsBootstrapper'
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+# 存储cookie的文件路径
+jd:
+  fileName: jd_cookie.txt
+
+# server酱
+#wechat:
+#  sendkey: SCT177921TBS56jkOpfjngwQ3uhWdDSawG
