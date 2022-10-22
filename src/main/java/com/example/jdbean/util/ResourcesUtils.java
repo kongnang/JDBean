@@ -1,10 +1,8 @@
 package com.example.jdbean.util;
 
-import com.sun.media.jfxmedia.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +17,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class ResourcesUtil {
+public class ResourcesUtils {
 
     public List<String> readFromClassPath(String fileName) {
         List<String> data = new ArrayList<>();

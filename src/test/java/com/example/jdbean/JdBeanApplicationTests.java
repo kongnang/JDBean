@@ -1,6 +1,6 @@
 package com.example.jdbean;
 
-import com.example.jdbean.util.ResourcesUtil;
+import com.example.jdbean.util.ResourcesUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,12 +12,12 @@ class JdBeanApplicationTests {
     private String FILE_NAME;
 
     @Autowired
-    private ResourcesUtil resourcesUtil;
+    private ResourcesUtils resourcesUtils;
 
     @Test
     void contextLoads() {
         System.out.println(FILE_NAME);
-        resourcesUtil.readFromClassPath(FILE_NAME);
+        resourcesUtils.readFromClassPath(FILE_NAME);
     }
 
 }

@@ -4,18 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.jdbean.result.AjaxResult;
 import com.example.jdbean.util.OkHttpUtils;
-import com.example.jdbean.util.ResourcesUtil;
+import com.example.jdbean.util.ResourcesUtils;
 import com.example.jdbean.util.StringUtils;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -31,7 +29,7 @@ public class DailyJdBeanTask {
     private String FILE_NAME;
 
     @Autowired
-    private ResourcesUtil resourcesUtil;
+    private ResourcesUtils resourcesUtils;
 
     private List<String> cookies;
 
@@ -43,7 +41,7 @@ public class DailyJdBeanTask {
     public void initCookie() {
         log.info("读取pt_key，pt_pin...");
         cookies = new ArrayList<>();
-        List<String> strings = resourcesUtil.readFromClassPath(FILE_NAME);
+        List<String> strings = resourcesUtils.readFromClassPath(FILE_NAME);
         for (String string : strings) {
             String[] split = string.split(",");
             String ptKey = split[0];
