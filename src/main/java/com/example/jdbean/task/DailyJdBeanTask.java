@@ -91,7 +91,7 @@ public class DailyJdBeanTask {
     /**
      * 摇京豆签到
      */
-    @Scheduled(cron = "0 0 8 * * ?")
+    @Scheduled(cron = "0 0 9 * * ?")
     public AjaxResult sharkBean() throws Exception {
         log.info("摇京豆签到开始");
 
@@ -106,8 +106,6 @@ public class DailyJdBeanTask {
                 header.put("referer", "https://spa.jd.com/");
                 RequestBody requestBody = new FormBody.Builder().build();
                 String response = OkHttpUtils.post(url, cookie, requestBody, header);
-                // 睡眠一会
-                Thread.sleep(1);
                 responses.add("第"+ ++n +"次摇京豆结果" + processResponse(response, "2"));
                 log.info("摇京豆执行{}次，response:{}", n, response);
             }
