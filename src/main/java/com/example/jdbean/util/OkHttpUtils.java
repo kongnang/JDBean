@@ -5,6 +5,7 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,6 +85,8 @@ public class OkHttpUtils {
     }
 
     public static String weChatPost(String title, String desp) throws IOException {
+        title = URLEncoder.encode(title, "UTF-8");
+        desp = URLEncoder.encode(desp, "UTF-8");
         String url = "https://sctapi.ftqq.com/" + SEND_KEY + ".send?title=" + title + "&desp=" + desp;
 
 

@@ -81,7 +81,7 @@ public class DailyJdBeanTask {
         StringBuffer desp = new StringBuffer();
         for (String response : responses) {
             desp.append("每日签到结果：");
-            desp.append(response).append("\n\n");
+            desp.append(response).append("\\n");
         }
         OkHttpUtils.weChatPost(title, desp.toString());
 
@@ -116,9 +116,9 @@ public class DailyJdBeanTask {
         StringBuffer desp = new StringBuffer();
         int count = 1;
         for (String response : responses) {
-            desp.append(response).append("\t\t");
+            desp.append(response).append("\\t");
             if (count % 7 == 0) {
-                desp.append("\n\n");
+                desp.append("\\n");
             }
         }
         OkHttpUtils.weChatPost(title, desp.toString());
@@ -159,7 +159,7 @@ public class DailyJdBeanTask {
         StringBuffer desp = new StringBuffer();
         for (String response : responses) {
             desp.append("抽取京豆结果：");
-            desp.append(response).append("\n\n");
+            desp.append(response).append("\\n");
         }
         OkHttpUtils.weChatPost(title, desp.toString());
 
