@@ -70,7 +70,7 @@ public class DailyJdBeanTask {
         int n = 0;
         List<String> responses = new ArrayList<>();
         for (String cookie : cookies) {
-            String response = OkHttpUtils.post(url, body, requestBody, header);
+            String response = OkHttpUtils.post(url, cookie, requestBody, header);
             responses.add(processResponse(response, "1"));
             log.info("京东签到任务执行次数:{}, 结果:{}", ++n, response);
             Thread.sleep(1000);
@@ -106,8 +106,16 @@ public class DailyJdBeanTask {
                 header.put("referer", "https://spa.jd.com/");
                 RequestBody requestBody = new FormBody.Builder().build();
                 String response = OkHttpUtils.post(url, cookie, requestBody, header);
-                responses.add("第"+ ++n +"次摇京豆结果" + processResponse(response, "2"));
+                response = processResponse(response, "2");
                 log.info("摇京豆执行{}次，response:{}", n, response);
+                // 如果提示已签到就退出循环
+                if (response.equals("今日已签到~")){
+                    responses.add("摇京豆结果\n" + processResponse(response, "2"));
+                    break;
+                }
+
+                // 防止频控
+                Thread.sleep(1000);
             }
         }
 
@@ -120,6 +128,7 @@ public class DailyJdBeanTask {
             if (count % 7 == 0) {
                 desp.append("\\n");
             }
+            count ++;
         }
         OkHttpUtils.weChatPost(title, desp.toString());
 
@@ -172,13 +181,33 @@ public class DailyJdBeanTask {
         String s2 = StringUtils.replace(s1, ");", "");
 
         JSONObject jsonObject = JSON.parseObject(s2);
-        String data = (String) jsonObject.get("data");
-        if (Objects.isNull(data) && type.equals("1")) {
-            data = (String)jsonObject.get("errorMessage");
-        }else if (Objects.isNull(data) && type.equals("2")) {
+        String data = "";
+        if (type.equals("1")) {
+            String code = (String) jsonObject.get("code");
+            if (code.equals("0")) {
+                JSONObject dailyAward = jsonObject.getJSONObject("data").getJSONObject("dailyAward");
+                String title = (String) dailyAward.get("title");
+                String subTitle = (String) dailyAward.get("subTitle");
+                JSONObject beanAward = dailyAward.getJSONObject("beanAward");
+                String beanCount = (String) beanAward.get("beanCount");
+                data = title + subTitle + beanCount;
+            } else {
+                data = (String) jsonObject.get("errorMessage");
+            }
+        }
+        // 摇京豆
+        else if (type.equals("2")) {
             data = (String)jsonObject.get("message");
-        }else if (Objects.isNull(data) && type.equals("3")) {
-            data = (String)jsonObject.get("promptMsg");
+        }
+        // 抽京豆
+        else if (type.equals("3")) {
+            String promptMsg = (String) jsonObject.get("promptMsg");
+            if (promptMsg.equals("恭喜您，中奖啦!")) {
+                String prizeName = (String) jsonObject.get("prizeName");
+                data = promptMsg + prizeName;
+            }else {
+                data = promptMsg;
+            }
         }
 
         return data;
