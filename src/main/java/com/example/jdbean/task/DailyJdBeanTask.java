@@ -109,8 +109,8 @@ public class DailyJdBeanTask {
                 header.put("referer", "https://spa.jd.com/");
                 RequestBody requestBody = new FormBody.Builder().build();
                 String response = OkHttpUtils.post(url, cookie, requestBody, header);
-                response = processResponse(response, "2");
                 log.info("摇京豆执行{}次，response:{}", ++n, response);
+                response = processResponse(response, "2");
                 // 如果提示已签到就退出循环
                 if ("今日已签到~".equals(response)){
                     break;
@@ -184,11 +184,15 @@ public class DailyJdBeanTask {
             String code = (String) jsonObject.get("code");
             if ("0".equals(code)) {
                 JSONObject dailyAward = jsonObject.getJSONObject("data").getJSONObject("dailyAward");
-                String title = (String) dailyAward.get("title");
-                String subTitle = (String) dailyAward.get("subTitle");
-                JSONObject beanAward = dailyAward.getJSONObject("beanAward");
-                String beanCount = (String) beanAward.get("beanCount");
-                data = title + subTitle + beanCount + "京豆";
+                // 新人第一次签到的奖励信息在newUserAward中
+                if (!Objects.isNull(dailyAward)) {
+                    String title = (String) dailyAward.get("title");
+                    String subTitle = (String) dailyAward.get("subTitle");
+                    JSONObject beanAward = dailyAward.getJSONObject("beanAward");
+                    String beanCount = (String) beanAward.get("beanCount");
+                    data = title + subTitle + beanCount + "京豆";
+                }
+
             } else {
                 data = (String) jsonObject.get("errorMessage");
             }

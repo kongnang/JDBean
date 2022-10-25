@@ -38,7 +38,6 @@ public class OkHttpUtils {
 
         Response response = client.newCall(request).execute();
         String result = response.body().string();
-        log.info("post请求, result: {}", result);
         return result;
     }
 
@@ -60,7 +59,6 @@ public class OkHttpUtils {
 
         Response response = client.newCall(request).execute();
         String result = response.body().string();
-        log.info("get请求, result: {}", result);
         return result;
     }
 
@@ -80,7 +78,6 @@ public class OkHttpUtils {
 
         Response response = client.newCall(request).execute();
         String result = response.body().string();
-        log.info("get请求, result: {}", result);
         return result;
     }
 
