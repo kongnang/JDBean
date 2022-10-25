@@ -2,11 +2,14 @@ package com.example.jdbean.task;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.jdbean.domain.JingBeanVO;
+import com.example.jdbean.domain.RewardVO;
 import com.example.jdbean.result.AjaxResult;
 import com.example.jdbean.util.OkHttpUtils;
 import com.example.jdbean.util.ResourcesUtils;
 import com.example.jdbean.util.StringUtils;
 import com.google.common.collect.Maps;
+import jdk.internal.org.objectweb.asm.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
@@ -107,12 +110,12 @@ public class DailyJdBeanTask {
                 RequestBody requestBody = new FormBody.Builder().build();
                 String response = OkHttpUtils.post(url, cookie, requestBody, header);
                 response = processResponse(response, "2");
-                log.info("摇京豆执行{}次，response:{}", n, response);
+                log.info("摇京豆执行{}次，response:{}", ++n, response);
                 // 如果提示已签到就退出循环
-                if (response.equals("今日已签到~")){
-                    responses.add("摇京豆结果\n" + processResponse(response, "2"));
+                if ("今日已签到~".equals(response)){
                     break;
                 }
+                responses.add("第" + n + "次摇京豆结果" + response);
 
                 // 防止频控
                 Thread.sleep(1000);
@@ -122,13 +125,8 @@ public class DailyJdBeanTask {
         // 往微信推送消息
         String title = "摇京豆签到";
         StringBuffer desp = new StringBuffer();
-        int count = 1;
         for (String response : responses) {
-            desp.append(response).append("\\t");
-            if (count % 7 == 0) {
-                desp.append("\\n");
-            }
-            count ++;
+            desp.append(response).append("\\n");
         }
         OkHttpUtils.weChatPost(title, desp.toString());
 
@@ -184,20 +182,32 @@ public class DailyJdBeanTask {
         String data = "";
         if (type.equals("1")) {
             String code = (String) jsonObject.get("code");
-            if (code.equals("0")) {
+            if ("0".equals(code)) {
                 JSONObject dailyAward = jsonObject.getJSONObject("data").getJSONObject("dailyAward");
                 String title = (String) dailyAward.get("title");
                 String subTitle = (String) dailyAward.get("subTitle");
                 JSONObject beanAward = dailyAward.getJSONObject("beanAward");
                 String beanCount = (String) beanAward.get("beanCount");
-                data = title + subTitle + beanCount;
+                data = title + subTitle + beanCount + "京豆";
             } else {
                 data = (String) jsonObject.get("errorMessage");
             }
         }
         // 摇京豆
         else if (type.equals("2")) {
-            data = (String)jsonObject.get("message");
+            JSONObject sharkBeanData = jsonObject.getJSONObject("data");
+            if (!Objects.isNull(sharkBeanData)) {
+                List<RewardVO> rewardVos = jsonObject.getObject("rewardVos", List.class);
+                if (!Objects.isNull(rewardVos)) {
+                    for (RewardVO rewardVo : rewardVos) {
+                        if (!Objects.isNull(rewardVo.getJingBeanVO())) {
+                            data += rewardVo.getJingBeanVO().toString();
+                        }
+                    }
+                }
+            }else {
+                data = (String) jsonObject.get("message");
+            }
         }
         // 抽京豆
         else if (type.equals("3")) {
