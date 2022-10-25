@@ -9,7 +9,6 @@ import com.example.jdbean.util.OkHttpUtils;
 import com.example.jdbean.util.ResourcesUtils;
 import com.example.jdbean.util.StringUtils;
 import com.google.common.collect.Maps;
-import jdk.internal.org.objectweb.asm.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
