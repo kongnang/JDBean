@@ -114,6 +114,9 @@ public class DailyJdBeanTask {
                 if ("今日已签到~".equals(response)){
                     break;
                 }
+                if ("活动太火爆，请稍后再试~".equals(response)) {
+                    continue;
+                }
                 responses.add("第" + n + "次摇京豆结果" + response);
 
                 // 防止频控
@@ -203,6 +206,7 @@ public class DailyJdBeanTask {
                 List<RewardVO> rewardVos = jsonObject.getObject("rewardVos", List.class);
                 if (!Objects.isNull(rewardVos)) {
                     for (RewardVO rewardVo : rewardVos) {
+                        log.info(rewardVo.toString());
                         if (!Objects.isNull(rewardVo.getJingBeanVO())) {
                             data += rewardVo.getJingBeanVO().toString();
                         }
