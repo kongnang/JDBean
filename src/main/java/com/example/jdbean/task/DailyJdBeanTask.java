@@ -10,6 +10,7 @@ import com.example.jdbean.util.ResourcesUtils;
 import com.example.jdbean.util.StringUtils;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bytecode.Throw;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,16 +186,20 @@ public class DailyJdBeanTask {
         if (type.equals("1")) {
             String code = (String) jsonObject.get("code");
             if ("0".equals(code)) {
-                JSONObject dailyAward = jsonObject.getJSONObject("data").getJSONObject("dailyAward");
-                // 新人第一次签到的奖励信息在newUserAward中
-                if (!Objects.isNull(dailyAward)) {
-                    String title = (String) dailyAward.get("title");
-                    String subTitle = (String) dailyAward.get("subTitle");
-                    JSONObject beanAward = dailyAward.getJSONObject("beanAward");
-                    String beanCount = (String) beanAward.get("beanCount");
-                    data = title + subTitle + beanCount + "京豆";
+                JSONObject dailyAward;
+                try {
+                    dailyAward = jsonObject.getJSONObject("data").getJSONObject("dailyAward");
+                    // 新人第一次签到的奖励信息在newUserAward中
+                    if (!Objects.isNull(dailyAward)) {
+                        String title = (String) dailyAward.get("title");
+                        String subTitle = (String) dailyAward.get("subTitle");
+                        JSONObject beanAward = dailyAward.getJSONObject("beanAward");
+                        String beanCount = (String) beanAward.get("beanCount");
+                        data = title + subTitle + beanCount + "京豆";
+                    }
+                }catch (Exception e) {
+                    log.info(e.getMessage());
                 }
-
             } else {
                 data = (String) jsonObject.get("errorMessage");
             }
